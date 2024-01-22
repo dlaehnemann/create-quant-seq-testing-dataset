@@ -31,7 +31,7 @@ units <- samples |>
   add_column(
     unit = "u1",
     fragment_len_mean = 430,
-    fragment_len_sd = 43
+    fragment_len_sd = 43,
     fq2 = ""
   ) |>
   mutate(

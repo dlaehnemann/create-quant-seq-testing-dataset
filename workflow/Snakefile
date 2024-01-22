@@ -110,7 +110,7 @@ rule bwa_mem2_index:
     params:
         algorithm="bwtsw",
     wrapper:
-        "v3.3.3/bio/bwa_mem2/index"
+        "v3.3.3/bio/bwa-mem2/index"
 
 
 rule get_fastq_se_gz:
@@ -147,7 +147,7 @@ rule bwa_mem2:
         sort_extra="",  # Extra args for samtools/picard.
     threads: 8
     wrapper:
-        "v3.3.3/bio/bwa_mem2/mem"
+        "v3.3.3/bio/bwa-mem2/mem"
 
 
 rule samtools_index:

@@ -29,6 +29,7 @@ rule all:
 
 
 rule generate_samples_units_tsvs:
+    localrule: True
     input:
         sampels=config["samples"],
     output:
@@ -43,6 +44,7 @@ rule generate_samples_units_tsvs:
 
 
 rule download_gene_set:
+    localrule: True
     output:
         gmt="resources/{gene_set}.gmt",
     conda:
@@ -61,10 +63,11 @@ rule translate_gene_symbols_to_ensembl_ids:
     conda:
         "envs/biomart.yaml"
     script:
-        "sripts/translate_gene_symbols_to_ensembl_ids.R"
+        "scripts/translate_gene_symbols_to_ensembl_ids.R"
 
 
 rule concatenate_transcript_lists:
+    localrule: True
     input:
         expand(
             "resources/{gene_set}.ensembl_transcript_ids.bed",
@@ -79,6 +82,7 @@ rule concatenate_transcript_lists:
 
 
 rule get_transcriptome:
+    localrule: True
     output:
         "resources/transcriptome.cdna.fasta",
     log:

@@ -62,6 +62,9 @@ rule translate_gene_symbols_to_ensembl_ids:
         "logs/{gene_set}.symbols_to_ensembl_ids.log",
     conda:
         "envs/biomart.yaml"
+    params:
+        species=config["ref"]["species"],
+        release=config["ref"]["release"],
     script:
         "scripts/translate_gene_symbols_to_ensembl_ids.R"
 

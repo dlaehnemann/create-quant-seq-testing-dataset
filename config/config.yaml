@@ -1,0 +1,13 @@
+samples: "config/samples.tsv"
+
+gene_sets:
+  - BOSCO_INTERFERON_INDUCED_ANTIVIRAL_MODULE
+  - REACTOME_SRP_DEPENDENT_COTRANSLATIONAL_PROTEIN_TARGETING_TO_MEMBRANE
+
+ref:
+  # ensembl species name
+  species: "homo_sapiens"
+  # ensembl release version
+  release: "111"
+  # genome build
+  build: "GRCh38"

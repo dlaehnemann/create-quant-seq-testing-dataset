@@ -6,6 +6,32 @@
 
 A Snakemake workflow for (reproducibly) creating a QuantSeq 3' mRNA testing dataset that is both small enough to run in standard continuous integration testing environments, and large enough to produce (some reasonably) meaningful results.
 
+This workflow is based on data presented and analyzed here:
+
+Corley, S.M., Troy, N.M., Bosco, A. et al. QuantSeq. 3′ Sequencing combined with Salmon provides a fast, reliable approach for high throughput RNA expression analysis. Sci Rep 9, 18895 (2019). https://doi.org/10.1038/s41598-019-55434-x
+
+The full data can be found here:
+
+https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA509074&o=acc_s%3Aa
+
+We use the QuantSeq data, which should be the samples with `LibraryLayout` `SINGLE` and `AvgSpotLen` `75` according to the methods section:
+
+https://www.nature.com/articles/s41598-019-55434-x#Sec10
+
+Thus, the total samples selected are:
+
+https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA509074&f=avgspotlen_l%3An%3A75%3Blibrarylayout_s%3An%3Asingle%3Ac&o=acc_s%3Aa
+
+The study identifies `BOSCO_INTERFERON_INDUCED_ANTIVIRAL_MODULE` as the most significant differentially regulated gene set affected by their `polyI:C` treatment:
+https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/BOSCO_INTERFERON_INDUCED_ANTIVIRAL_MODULE
+
+We thus restrict the raw data to reads mapping to the contained genes in order to drastically reduce data set size while hopefully maintaining some kind of useful result.
+In addition, we also add in the `REACTOME_SRP_DEPENDENT_COTRANSLATIONAL_PROTEIN_TARGETING_TO_MEMBRANE` which is not expected to be detected as a differentially expressed gene set in the QuantSeq data:
+https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/REACTOME_SRP_DEPENDENT_COTRANSLATIONAL_PROTEIN_TARGETING_TO_MEMBRANE.html
+
+For reference, Figure 7 of the original manuscript gives the most important results of the gene set enrichment analysis:
+https://www.nature.com/articles/s41598-019-55434-x/figures/7
+
 
 ## Usage
 

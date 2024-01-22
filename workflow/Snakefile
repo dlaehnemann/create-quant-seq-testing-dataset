@@ -2,3 +2,203 @@
 # Please follow the best practices: 
 # https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html,
 # in particular regarding the standardized folder structure mentioned there. 
+import pandas as pd
+
+samples = pd.read_csv(
+    config["samples"],
+    sep="\t",
+    dtype=str,
+    comment="#")
+
+def get_final_output(wildcards):
+    final_output = expand(
+        "results/wanted_reads/{accession}.fastq.gz",
+        accession = samples.loc[:, "Run"],
+    )
+    final_output.extend(
+        [
+            "results/samples.tsv",
+            "results/units.tsv",
+        ]
+    )
+    return final_output
+
+
+rule all:
+    input:
+        get_final_output
+
+
+rule generate_samples_units_tsvs:
+    input:
+        sampels=config["samples"],
+    output:
+        samples="results/samples.tsv",
+        units="results/units.tsv",
+    log:
+        "logs/generate_samples_units_tsvs.log",
+    conda:
+        "envs/tidyverse.yaml"
+    script:
+        "scripts/generate_samples_units_tsvs.R"
+
+
+
+rule download_gene_set:
+    output:
+        gmt="resources/{gene_set}.gmt"
+    conda:
+        "envs/curl.yaml"
+    shell:
+        "curl -o {output.gmt} 'https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName={wildcards.gene_set}&fileType=gmt'"
+    
+
+rule translate_gene_symbols_to_ensembl_ids:
+    input:
+        gmt="resources/{gene_set}.gmt"
+    output:
+        transcript_bed="resources/{gene_set}.ensembl_transcript_ids.bed"
+    log:
+        "logs/{gene_set}.symbols_to_ensembl_ids.log"
+    conda:
+        "envs/biomart.yaml"
+    script:
+        "sripts/translate_gene_symbols_to_ensembl_ids.R"
+
+
+rule concatenate_transcript_lists:
+    input:
+        expand(
+            "resources/{gene_set}.ensembl_transcript_ids.bed",
+            gene_set = config["gene_sets"]
+        ),
+    output:
+        "resources/wanted_transcripts.bed"
+    log:
+        "logs/wanted_transcripts.log"
+    shell:
+        "cat {input} | sort -k 1,1 -k2,2n >{output} 2>{log}"
+
+
+rule get_transcriptome:
+    output:
+        "resources/transcriptome.cdna.fasta",
+    log:
+        "logs/get-transcriptome/cdna.log",
+    params:
+        species=config["ref"]["species"],
+        datatype="cdna",
+        build=config["ref"]["build"],
+        release=config["ref"]["release"],
+    cache: "omit-software"
+    wrapper:
+        "v3.3.3/bio/reference/ensembl-sequence"
+
+
+#rule remove_transcript_version_number:
+#    input:
+#        "resources/transcriptome.cdna.fasta",
+#    output:
+#        "resources/transcriptome.cdna.no_version_number.fasta",
+#    log:
+#        "logs/transcriptome.cdna.no_version_number.fasta.log",
+#    conda:
+#        "envs/sed.yaml"
+#    shell:
+#        "sed -e 's/^\(>[^.]\+\)\.[0-9]\+/\1/' {input} >{output} 2>{log}"
+#
+
+rule bwa_mem2_index:
+    input:
+        "resources/transcriptome.cdna.fasta",
+    output:
+        idx=multiext("resources/transcriptome.cdna.no_version_number.fasta", ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
+    log:
+        "logs/bwa_mem2_index/transcriptome.cdna.no_version_number.fasta.log",
+    params:
+        algorithm="bwtsw",
+    wrapper:
+        "v3.3.3/bio/bwa_mem2/index"
+
+
+rule get_fastq_se_gz:
+    output:
+        "data/{accession}.fastq.gz"
+    log:
+        "logs/{accession}.gz.log"
+    params:
+        extra="--skip-technical"
+    threads: 8
+    wrapper:
+        "v3.3.3/bio/sra-tools/fasterq-dump"
+
+
+rule bwa_mem2:
+    input:
+        reads="data/{accession}.fastq.gz",
+        idx=multiext("resources/transcriptome.cdna.fasta", ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
+    output:
+        "results/mapped/{accession}.sorted.bam",
+    log:
+        "logs/bwa_mem/{accession}.log",
+    params:
+        extra=r"-R '@RG\tID:{accession}\tSM:{accession}'",
+        sort="samtools",  # Can be 'none', 'samtools' or 'picard'.
+        sort_order="coordinate",  # Can be 'queryname' or 'coordinate'.
+        sort_extra="",  # Extra args for samtools/picard.
+    threads: 8
+    wrapper:
+        "v3.3.3/bio/bwa_mem2/mem"
+
+
+rule extract_wanted_transcripts:
+    input:
+        wanted_transcripts="resources/wanted_transcripts.txt"
+        bam="results/mapped/{accession}.sorted.bam",
+        bai="results/mapped/{accession}.sorted.bam.bai",
+    output:
+        bam="results/wanted_transcripts/{accession}.sorted.bam"
+        idx="results/wanted_transcripts/{accession}.sorted.bam.bai"
+    log:
+        "logs/wanted_transcripts/{accession}.sorted.log"
+    params:
+        extra=lambda wc, input: "--use-index --target-file {input.wanted_transcripts}",  # optional params string
+        region="",  # optional region string
+    threads: 2
+    wrapper:
+        "v3.3.4/bio/samtools/view"
+
+
+rule samtools_fastq_interleaved:
+    input:
+        "results/wanted_transcripts/{accession}.sorted.bam"
+    output:
+        "results/wanted_reads/{accession}.fastq",
+    log:
+        "logs/wanted_reads/{accession}.fastq.log",
+    params:
+        " ",
+    threads: 3
+    wrapper:
+        "v3.3.4/bio/samtools/fastq/interleaved"
+
+
+rule gzip_fastqs:
+    input:
+        "results/wanted_reads/{accession}.fastq",
+    output:
+        "results/wanted_reads/{accession}.fastq.gz",
+    log:
+        "logs/wanted_reads/{accession}.fastq.gz.log",
+    conda:
+        "envs/pigz.yaml"
+    threads: 8
+    shell:
+        "pigz "
+        " --best "
+        " --stdout "
+        " --processes {threads} "
+        " {input} "
+        " >{output} "
+        " 2>{log} "
+

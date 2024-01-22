@@ -4,6 +4,8 @@
 # in particular regarding the standardized folder structure mentioned there.
 import pandas as pd
 
+configfile: "config/config.yaml"
+
 samples = pd.read_csv(config["samples"], sep="\t", dtype=str, comment="#")
 
 

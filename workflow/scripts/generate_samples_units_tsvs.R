@@ -35,7 +35,7 @@ units <- samples |>
     fq2 = ""
   ) |>
   mutate(
-    fq1 = str_c(c("../test-data/quant_seq/", sample, ".fastq.gz")),
+    fq1 = str_c("../test-data/quant_seq/", sample, ".fastq.gz"),
     .before = "fq1"
   )
 

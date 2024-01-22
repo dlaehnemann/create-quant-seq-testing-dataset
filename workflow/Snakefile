@@ -31,7 +31,7 @@ rule all:
 rule generate_samples_units_tsvs:
     localrule: True
     input:
-        sampels=config["samples"],
+        samples=config["samples"],
     output:
         samples="results/samples.tsv",
         units="results/units.tsv",

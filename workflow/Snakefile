@@ -93,26 +93,12 @@ rule get_transcriptome:
         "v3.3.3/bio/reference/ensembl-sequence"
 
 
-# rule remove_transcript_version_number:
-#    input:
-#        "resources/transcriptome.cdna.fasta",
-#    output:
-#        "resources/transcriptome.cdna.no_version_number.fasta",
-#    log:
-#        "logs/transcriptome.cdna.no_version_number.fasta.log",
-#    conda:
-#        "envs/sed.yaml"
-#    shell:
-#        "sed -e 's/^\(>[^.]\+\)\.[0-9]\+/\1/' {input} >{output} 2>{log}"
-#
-
-
 rule bwa_mem2_index:
     input:
         "resources/transcriptome.cdna.fasta",
     output:
         idx=multiext(
-            "resources/transcriptome.cdna.no_version_number.fasta",
+            "resources/transcriptome.cdna.fasta",
             ".0123",
             ".amb",
             ".ann",
@@ -120,7 +106,7 @@ rule bwa_mem2_index:
             ".pac",
         ),
     log:
-        "logs/bwa_mem2_index/transcriptome.cdna.no_version_number.fasta.log",
+        "logs/bwa_mem2_index/transcriptome.cdna.fasta.log",
     params:
         algorithm="bwtsw",
     wrapper:

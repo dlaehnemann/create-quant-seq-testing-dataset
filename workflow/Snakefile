@@ -53,6 +53,12 @@ rule download_gene_set:
         "curl -o {output.gmt} 'https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName={wildcards.gene_set}&fileType=gmt'"
 
 
+def get_bioc_species_name():
+    first_letter = config["ref"]["species"][0]
+    subspecies = config["ref"]["species"].split("_")[1]
+    return first_letter + subspecies
+
+
 rule translate_gene_symbols_to_ensembl_ids:
     input:
         gmt="resources/{gene_set}.gmt",
@@ -63,7 +69,7 @@ rule translate_gene_symbols_to_ensembl_ids:
     conda:
         "envs/biomart.yaml"
     params:
-        species=config["ref"]["species"],
+        species=get_bioc_species_name(),
         release=config["ref"]["release"],
     script:
         "scripts/translate_gene_symbols_to_ensembl_ids.R"

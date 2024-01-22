@@ -150,9 +150,23 @@ rule bwa_mem2:
         "v3.3.3/bio/bwa_mem2/mem"
 
 
+rule samtools_index:
+    input:
+        "results/mapped/{accession}.sorted.bam",
+    output:
+        "results/mapped/{accession}.sorted.bam.bai",
+    log:
+        "logs/mapped/{accession}.sorted.bam.bai.log",
+    params:
+        extra="",  # optional params string
+    threads: 4  # This value - 1 will be sent to -@
+    wrapper:
+        "v3.3.3/bio/samtools/index"
+
+
 rule extract_wanted_transcripts:
     input:
-        wanted_transcripts="resources/wanted_transcripts.txt",
+        wanted_transcripts="resources/wanted_transcripts.bed",
         bam="results/mapped/{accession}.sorted.bam",
         bai="results/mapped/{accession}.sorted.bam.bai",
     output:

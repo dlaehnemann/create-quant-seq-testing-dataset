@@ -30,7 +30,7 @@ while (class(mart)[[1]] != "Mart") {
       biomaRt::useEnsembl(
         biomart = "ENSEMBL_MART_ENSEMBL",
         dataset = str_c(snakemake@params[["species"]], "_gene_ensembl"),
-        version = snakemake@params[["release"]],
+#        version = snakemake@params[["release"]],
         mirror = mart
       )
     },

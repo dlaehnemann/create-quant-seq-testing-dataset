@@ -11,7 +11,7 @@ library("cli")
 # this variable holds a mirror name until
 # useEnsembl succeeds ("www" is last, because
 # of very frequent "Internal Server Error"s)
-mart <- "useast"
+mart <- "www"
 rounds <- 0
 while (class(mart)[[1]] != "Mart") {
   print(
@@ -24,7 +24,7 @@ while (class(mart)[[1]] != "Mart") {
     {
       # done here, because error function does not
       # modify outer scope variables, I tried
-      if (mart == "www") rounds <- rounds + 1
+      if (mart == "asia") rounds <- rounds + 1
       # equivalent to useMart, but you can choose
       # the mirror instead of specifying a host
       biomaRt::useEnsembl(

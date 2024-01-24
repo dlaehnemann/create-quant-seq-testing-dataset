@@ -195,18 +195,37 @@ rule extract_wanted_transcripts:
         "v3.3.4/bio/samtools/view"
 
 
-rule samtools_fastq_interleaved:
+rule samtools_collate:
     input:
-        "results/wanted_transcripts/{accession}.sorted.bam",
+        bam="results/wanted_transcripts/{accession}.sorted.bam",
     output:
-        "results/wanted_reads/{accession}.fastq",
+        bam="results/wanted_transcripts/{accession}.queryname_collated.bam",
+    log:
+        "logs/wanted_transcripts/{accession}.queryname_collated.log",
+    conda:
+        "envs/samtools.yaml"
+    threads: 3
+    params:
+        threads=lambda wc, threads: threads - 1
+    shell:
+        "samtools collate -o {output.bam} --threads {params.threads} {input.bam} 2>{log}"
+
+
+
+rule samtools_fastq:
+    input:
+        bam="results/wanted_transcripts/{accession}.queryname_collated.bam",
+    output:
+        fq="results/wanted_reads/{accession}.fastq",
     log:
         "logs/wanted_reads/{accession}.fastq.log",
-    params:
-        " ",
+    conda:
+        "envs/samtools.yaml"
     threads: 3
-    wrapper:
-        "v3.3.4/bio/samtools/fastq/interleaved"
+    params:
+        threads=lambda wc, threads: threads - 1
+    shell:
+        "samtools fastq -n --threads {params.threads} {input.bam} >{output.fq} 2>{log}"
 
 
 rule gzip_fastqs:

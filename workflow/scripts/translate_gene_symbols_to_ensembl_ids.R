@@ -38,7 +38,10 @@ while (class(mart)[[1]] != "Mart") {
             rounds,
             " times. You might have a connection problem, or no mirror is responsive.\n",
             "The last error message was:\n",
-            message(e)
+            message(e),
+            "\n",
+            "Warnings were:\n",
+            warnings()
           )
         )
       }

@@ -22,12 +22,12 @@ Thus, the total samples selected are:
 
 https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA509074&f=avgspotlen_l%3An%3A75%3Blibrarylayout_s%3An%3Asingle%3Ac&o=acc_s%3Aa
 
-The study identifies `BOSCO_INTERFERON_INDUCED_ANTIVIRAL_MODULE` as the most significant differentially regulated gene set affected by their `polyI:C` treatment:
-https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/BOSCO_INTERFERON_INDUCED_ANTIVIRAL_MODULE
+The study identifies `UROSEVIC_RESPONSE_TO_IMIQUIMOD` as the most significant differentially regulated gene set affected by their `polyI:C` treatment:
+https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/UROSEVIC_RESPONSE_TO_IMIQUIMOD
 
 We thus restrict the raw data to reads mapping to the contained genes in order to drastically reduce data set size while hopefully maintaining some kind of useful result.
-In addition, we also add in the `REACTOME_SRP_DEPENDENT_COTRANSLATIONAL_PROTEIN_TARGETING_TO_MEMBRANE` which is not expected to be detected as a differentially expressed gene set in the QuantSeq data:
-https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/REACTOME_SRP_DEPENDENT_COTRANSLATIONAL_PROTEIN_TARGETING_TO_MEMBRANE.html
+In addition, we also add in the `KEGG_PROTEASOME` which is not expected to be detected as a differentially expressed gene set in the QuantSeq data:
+https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/KEGG_PROTEASOME
 
 For reference, Figure 7 of the original manuscript gives the most important results of the gene set enrichment analysis:
 https://www.nature.com/articles/s41598-019-55434-x/figures/7

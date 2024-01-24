@@ -53,14 +53,13 @@ while (class(mart)[[1]] != "Mart") {
       }
       # hop to next mirror
       mart <- switch(mart,
-        useast = "uswest",
-        uswest = "asia",
-        asia = "www",
-        www = {
+        www = "useast",
+        useast = "asia",
+        asia = {
           # wait before starting another round through the mirrors,
           # hoping that intermittent problems disappear
           Sys.sleep(30)
-          "useast"
+          "www"
         }
       )
     }

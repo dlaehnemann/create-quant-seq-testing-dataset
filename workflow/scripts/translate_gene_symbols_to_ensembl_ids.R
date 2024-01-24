@@ -14,6 +14,12 @@ library("cli")
 mart <- "useast"
 rounds <- 0
 while (class(mart)[[1]] != "Mart") {
+  print(
+    str_c(
+      "Trying biomart mirror: ",
+      mart
+    )
+  )
   mart <- tryCatch(
     {
       # done here, because error function does not

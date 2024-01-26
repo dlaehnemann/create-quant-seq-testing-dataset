@@ -33,6 +33,8 @@ https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/KEGG_PROTEASOME
 For reference, Figure 7 of the original manuscript gives the most important results of the gene set enrichment analysis:
 https://www.nature.com/articles/s41598-019-55434-x/figures/7
 
+The MSigDB gene sets are used according to their [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), which is given here:
+https://www.gsea-msigdb.org/gsea/msigdb_license_terms.jsp
 
 ## Usage
 

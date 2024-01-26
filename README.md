@@ -1,5 +1,6 @@
 # Snakemake workflow: `create-quant-seq-testing-dataset`
 
+[![DOI](https://zenodo.org/badge/745028447.svg)](https://zenodo.org/doi/10.5281/zenodo.10572323)
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/dlaehnemann/create-quant-seq-testing-dataset/workflows/Tests/badge.svg?branch=main)](https://github.com/dlaehnemann/create-quant-seq-testing-dataset/actions?query=branch%3Amain+workflow%3ATests)
 

@@ -75,7 +75,7 @@ pathway_genes <- (
 ensembl_transcript_ids <- getBM(
   attributes = c(
     "ensembl_transcript_id_version",
-   "transcript_length"
+    "transcript_length"
   ),
   filters = "hgnc_symbol",
   values = pathway_genes,
